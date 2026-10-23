@@ -25,7 +25,7 @@ No build step is required.
 
 ## Checkout limitations
 
-The pre-order form sends reservation details to the configured FormSubmit mailbox and requests a customer autoresponse containing the order breakdown and follow-up instructions. Confirm the mailbox activation email from FormSubmit before accepting submissions. The UI shows the invoice only after FormSubmit accepts the request; acceptance does not guarantee delivery to either mailbox.
+The pre-order form sends reservation details as `FormData` to the configured FormSubmit mailbox. Confirm the mailbox activation email from FormSubmit before accepting submissions. The UI shows the invoice only after FormSubmit accepts the request; acceptance does not guarantee delivery to the mailbox.
 
 The selected card, mobile wallet, or bank-wire option is a **payment preference only**. The static site does not process or verify payments, generate checkout links, store orders, or guarantee fulfillment. The sales team must provide final checkout or wire instructions. Use a trusted payment provider and a secure backend before accepting real payments.
 

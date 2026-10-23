@@ -1333,34 +1333,29 @@
             const buildSpecs = `${size}mm • ${finish} • ${band} • Connectivity: ${connectivity}`;
             const paymentPreference = formatPaymentMethodLabel(paymentMethod);
             const instructions = 'Thank you for reserving your Aura Horizon Vision! Your order configuration is locked in. Our sales team will reach out directly to your provided email address with final checkout link, wire instructions, and priority shipping verification prior to dispatch.';
-            const payload = {
-                name: customerName,
-                email: customerEmail,
-                _subject: `Aura Horizon Vision Reservation: ${customerName} (${size}mm)`,
-                _template: 'table',
-                _captcha: 'false',
-                _replyto: customerEmail,
-                Customer_Name: customerName,
-                Customer_Email: customerEmail,
-                Watch_Size: `${size}mm`,
-                Case_Finish: finish,
-                Wristband: band,
-                Connectivity: connectivity,
-                Laser_Engraving: engravingText,
-                Payment_Preference: paymentPreference,
-                Total_Price: totalAmount,
-                Payment_Status: 'Pending Verification / Processing On Dispatch',
-                Message: `New pre-order submitted by ${customerName} (${customerEmail}).\n\nBuild: ${buildSpecs}\nLaser Engraving: ${engravingText}\nPayment Preference: ${paymentPreference}\nTotal: ${totalAmount}\nStatus: Pending Verification / Processing On Dispatch\n\n${instructions}`
-            };
+            const formData = new FormData();
+            formData.append('_subject', `Aura Horizon Vision Reservation: ${customerName} (${size}mm)`);
+            formData.append('_replyto', customerEmail);
+            formData.append('_template', 'table');
+            formData.append('Customer Name', customerName);
+            formData.append('Customer Email', customerEmail);
+            formData.append('Watch Size', `${size}mm`);
+            formData.append('Case Finish', finish);
+            formData.append('Wristband', band);
+            formData.append('Connectivity', connectivity);
+            formData.append('Laser Engraving', engravingText);
+            formData.append('Payment Preference', paymentPreference);
+            formData.append('Total Price', totalAmount);
+            formData.append('Payment Status', 'Pending Verification / Processing On Dispatch');
+            formData.append('Message', `New pre-order submitted by ${customerName} (${customerEmail}).\n\nBuild: ${buildSpecs}\nLaser Engraving: ${engravingText}\nPayment Preference: ${paymentPreference}\nTotal: ${totalAmount}\n\n${instructions}`);
 
             try {
                 const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent('sobanamjad27@gmail.com')}`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify(payload)
+                    body: formData
                 });
                 const data = await response.json();
 
@@ -1383,7 +1378,7 @@
                 if (window.lucide) lucide.createIcons();
             } catch (error) {
                 console.error('Error submitting pre-order via FormSubmit:', error);
-                status.textContent = 'Submission failed. Please check your internet connection or verify that the FormSubmit activation link was clicked for sobanamjad27@gmail.com.';
+                status.textContent = 'Submission failed. Please verify your connection or check your Gmail spam folder for any FormSubmit blocks.';
                 status.classList.remove('hidden');
                 setPreOrderState('configuring');
                 submitButton.disabled = false;
