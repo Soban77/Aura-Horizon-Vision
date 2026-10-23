@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Horizon Vision | Flagship Smartwatch Launch</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter & Syne -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Three.js WebGL renderer and GSAP camera transitions -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        aura: {
+                            gold: '#D4AF37',
+                            titanium: '#8E8D8A',
+                            emerald: '#00FA9A',
+                            accent: '#3B82F6',
+                            dark: '#07090E',
+                            card: '#0F131C',
+                            border: '#1E2638'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Syne', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 3s infinite alternate',
+                        'float': 'float 6s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%': { filter: 'drop-shadow(0 0 15px rgba(59, 130, 246, 0.3))' },
+                            '100%': { filter: 'drop-shadow(0 0 35px rgba(0, 250, 154, 0.6))' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-12px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #07090E;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E2638;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3B82F6;
+        }
+        .glow-effect {
+            background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.15), transparent 70%);
+        }
+        .glass-panel {
+            background: rgba(15, 19, 28, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .tech-grid-bg {
+            isolation: isolate;
+            background-image:
+                radial-gradient(ellipse at 50% 20%, rgba(59, 130, 246, 0.12), transparent 58%),
+                linear-gradient(rgba(75, 105, 150, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(75, 105, 150, 0.08) 1px, transparent 1px);
+            background-size: auto, 36px 36px, 36px 36px;
+        }
+        .tech-grid-bg::before {
+            position: absolute;
+            z-index: -1;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 20%, #07090E 90%);
+            content: "";
+            pointer-events: none;
+        }
+        #preOrderModal {
+            overflow-y: auto;
+        }
+        #preOrderModal > div {
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+        @media (max-width: 768px) {
+            #navbar button,
+            #mobileMenu a,
+            #customizer button,
+            #preOrderModal button,
+            #preOrderModal select,
+            #preOrderModal input:not([type="radio"]),
+            #engravingInput {
+                min-height: 44px;
+            }
+            #hotspots button {
+                min-width: 44px;
+                min-height: 44px;
+            }
+            #mobileMenu a {
+                display: flex;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body class="bg-aura-dark text-slate-100 font-sans selection:bg-blue-600 selection:text-white overflow-x-hidden">
+
+    <!-- TOP NAVIGATION -->
+    <nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 glass-panel border-b border-aura-border/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="scrollToTop()">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-emerald-400 p-[2px] flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <div class="w-full h-full bg-aura-dark rounded-[10px] flex items-center justify-center">
+                        <i data-lucide="watch" class="w-5 h-5 text-blue-400"></i>
+                    </div>
+                </div>
+                <span class="font-display font-bold text-xl tracking-wider text-white">AURA <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">HORIZON</span></span>
+            </div>
+
+            <!-- Desktop Nav Links -->
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+                <a href="#overview" class="hover:text-blue-400 transition-colors">Overview</a>
+                <a href="#customizer" class="hover:text-blue-400 transition-colors">Design & Studio</a>
+                <a href="#hotspots" class="hover:text-blue-400 transition-colors">Hotspots</a>
+                <a href="#specs" class="hover:text-blue-400 transition-colors">Tech Specs</a>
+                <a href="#compare" class="hover:text-blue-400 transition-colors">Compare</a>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <button onclick="openPreOrderModal()" class="relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white rounded-full bg-gradient-to-r from-blue-600 to-emerald-500 hover:from-blue-500 hover:to-emerald-400 transition-all shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transform hover:-translate-y-0.5 active:translate-y-0">
+                    <span>Pre-Order</span>
+                    <span id="navPrice" class="ml-2 text-xs text-white/80">$799</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
+                </button>
+                <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg bg-aura-card border border-aura-border text-slate-300 hover:text-white" onclick="toggleMobileMenu()">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobileMenu" class="hidden md:hidden glass-panel border-b border-aura-border px-6 py-6 space-y-4">
+            <a href="#overview" onclick="toggleMobileMenu()" class="block text-slate-300 hover:text-white text-lg">Overview</a>
+            <a href="#customizer" onclick="toggleMobileMenu()" class="block text-slate-300 hover:text-white text-lg">Design & Studio</a>
+            <a href="#hotspots" onclick="toggleMobileMenu()" class="block text-slate-300 hover:text-white text-lg">Hotspots</a>
+            <a href="#specs" onclick="toggleMobileMenu()" class="block text-slate-300 hover:text-white text-lg">Tech Specs</a>
+            <a href="#compare" onclick="toggleMobileMenu()" class="block text-slate-300 hover:text-white text-lg">Compare</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="overview" class="relative min-h-screen pt-28 pb-16 flex flex-col justify-center items-center overflow-hidden glow-effect">
+        <!-- Ambient Radial Background Blur -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute top-1/3 left-1/3 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10 w-full flex flex-col items-center">
+            <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full glass-panel border border-blue-500/30 text-blue-400 text-xs font-semibold tracking-wider uppercase mb-6 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>The Future On Your Wrist</span>
+            </div>
+
+            <h1 class="font-display font-extrabold text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-white max-w-5xl leading-[1.1]">
+                AURA HORIZON <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400">VISION</span>
+            </h1>
+
+            <p class="mt-6 text-lg sm:text-xl text-slate-400 max-w-2xl font-light leading-relaxed">
+                Aerospace-grade titanium, micro-LED quantum clarity, and bio-optic telemetry. Built for the modern visionary.
+            </p>
+
+            <!-- 3D INTERACTIVE CANVAS VISUALIZER -->
+            <div class="mt-10 relative w-full max-w-2xl h-[380px] sm:h-[450px] flex items-center justify-center">
+                <div id="watchCanvas" class="w-full h-full cursor-grab active:cursor-grabbing z-10" aria-label="Interactive 3D smartwatch. Drag to rotate."></div>
+                <div id="watchRenderError" class="hidden absolute inset-0 z-30 flex items-center justify-center p-6 text-center text-sm text-rose-300 glass-panel">
+                    The 3D watch preview could not start. Please use a browser with WebGL enabled.
+                </div>
+                
+                <!-- Rotation Controls Indicator -->
+                <div class="absolute bottom-2 left-1/2 -translate-x-1/2 glass-panel px-4 py-1.5 rounded-full text-xs text-slate-400 flex items-center space-x-2 border border-aura-border pointer-events-none z-20">
+                    <i data-lucide="rotate-3d" class="w-4 h-4 text-blue-400 animate-spin" style="animation-duration: 8s;"></i>
+                    <span>Drag horizontally to rotate 360°</span>
+                </div>
+                <div id="heroVariantBadge" class="absolute top-4 left-1/2 -translate-x-1/2 glass-panel px-4 py-1.5 rounded-full text-xs font-semibold text-white border border-aura-border pointer-events-none z-20 transition-all duration-300">
+                    Obsidian · Titanium Link
+                </div>
+            </div>
+
+            <!-- Quick Specs Strip -->
+            <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
+                <div class="glass-panel p-4 rounded-2xl border border-aura-border text-center transform hover:-translate-y-1 transition-transform">
+                    <span class="block font-display text-2xl font-bold text-white">3,000 Nits</span>
+                    <span class="text-xs text-slate-400">Quantum Micro-LED</span>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl border border-aura-border text-center transform hover:-translate-y-1 transition-transform">
+                    <span class="block font-display text-2xl font-bold text-emerald-400">14 Days</span>
+                    <span class="text-xs text-slate-400">Dual-Engine Battery</span>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl border border-aura-border text-center transform hover:-translate-y-1 transition-transform">
+                    <span class="block font-display text-2xl font-bold text-white">100M</span>
+                    <span class="text-xs text-slate-400">Water & Dive Proof</span>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl border border-aura-border text-center transform hover:-translate-y-1 transition-transform">
+                    <span class="block font-display text-2xl font-bold text-blue-400">Grade 5</span>
+                    <span class="text-xs text-slate-400">Aerospace Titanium</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CUSTOMIZER STUDIO SECTION -->
+    <section id="customizer" class="py-24 relative tech-grid-bg bg-aura-card/30 border-y border-aura-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="font-display text-3xl sm:text-5xl font-bold text-white tracking-tight">Design Studio</h2>
+                <p class="mt-4 text-slate-400">Personalize your Horizon Vision with precision aerospace finishes and handcrafted band textures.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                <!-- Preview Panel -->
+                <div class="lg:col-span-7 glass-panel rounded-3xl p-6 md:p-8 border border-aura-border relative overflow-hidden">
+                    <div id="customizerGlow" class="absolute w-80 h-80 rounded-full blur-[90px] opacity-30 transition-all duration-500 bg-blue-500 pointer-events-none"></div>
+
+                    <div class="relative z-10">
+                        <div class="relative h-[360px] sm:h-[420px] rounded-2xl overflow-hidden tech-grid-bg glass-panel">
+                            <div id="studioWatchCanvas" class="absolute inset-0 cursor-grab active:cursor-grabbing" aria-label="Interactive 3D watch studio. Drag to rotate."></div>
+                            <div id="studioRenderError" class="hidden absolute inset-0 z-20 flex items-center justify-center p-6 text-center text-sm text-rose-300 glass-panel">
+                                The 3D studio preview could not start. Please use a browser with WebGL enabled.
+                            </div>
+                            <span class="absolute left-4 top-4 glass-panel rounded-full px-3 py-1 text-[10px] uppercase tracking-widest text-slate-300 pointer-events-none">Live 3D Studio</span>
+                            <span class="absolute bottom-4 left-1/2 -translate-x-1/2 glass-panel rounded-full px-4 py-1.5 text-xs text-slate-400 pointer-events-none">Drag to orbit · Material preview</span>
+                        </div>
+
+                        <div class="mt-6 grid gap-5">
+                            <div class="glass-panel rounded-2xl p-4 border border-aura-border">
+                                <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3 flex items-center">
+                                    <i data-lucide="camera" class="w-4 h-4 mr-2 text-blue-400"></i> Cinematic Camera Focus
+                                </h3>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                    <button type="button" onclick="focusWatch('crown')" class="glass-panel p-2.5 rounded-lg border border-aura-border text-xs text-slate-200 hover:border-blue-400 transition-colors">Crown View</button>
+                                    <button type="button" onclick="focusWatch('strap')" class="glass-panel p-2.5 rounded-lg border border-aura-border text-xs text-slate-200 hover:border-blue-400 transition-colors">Strap &amp; Lugs Detail</button>
+                                    <button type="button" onclick="focusWatch('front')" class="glass-panel p-2.5 rounded-lg border border-aura-border text-xs text-slate-200 hover:border-blue-400 transition-colors">Front Dial View</button>
+                                    <button type="button" onclick="focusWatch('reset')" class="glass-panel p-2.5 rounded-lg border border-aura-border text-xs text-slate-200 hover:border-blue-400 transition-colors">Reset Orbit</button>
+                                </div>
+                            </div>
+
+                            <div class="glass-panel rounded-2xl p-4 border border-aura-border">
+                                <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3 flex items-center">
+                                    <i data-lucide="watch" class="w-4 h-4 mr-2 text-emerald-400"></i> Watch Face View
+                                </h3>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button type="button" onclick="setWatchFace('minimal')" class="face-btn glass-panel p-2.5 rounded-lg border border-blue-500 text-xs text-slate-200 hover:border-blue-400 transition-colors">Minimal OS</button>
+                                    <button type="button" onclick="setWatchFace('chronograph')" class="face-btn glass-panel p-2.5 rounded-lg border border-aura-border text-xs text-slate-200 hover:border-blue-400 transition-colors">Chronograph</button>
+                                    <button type="button" onclick="setWatchFace('telemetry')" class="face-btn glass-panel p-2.5 rounded-lg border border-aura-border text-xs text-slate-200 hover:border-blue-400 transition-colors">Telemetry</button>
+                                </div>
+                            </div>
+
+                            <div class="glass-panel rounded-2xl p-4 border border-aura-border">
+                                <label for="engravingInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">Custom Laser Engraving</label>
+                                <input id="engravingInput" type="text" maxlength="12" placeholder="Add initials (12 characters max)" class="w-full bg-aura-card border border-aura-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                                <p class="mt-2 text-xs text-slate-500">Engraving is projected onto the rear titanium backplate in real time.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customizer Controls -->
+                <div class="lg:col-span-5 space-y-8">
+                    <!-- Case Finish Selection -->
+                    <div>
+                        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-4 flex items-center">
+                            <i data-lucide="shield" class="w-4 h-4 mr-2 text-blue-400"></i> Case Finish
+                        </h3>
+                        <div class="grid grid-cols-2 gap-3" id="finishOptions">
+                            <button onclick="setFinish('obsidian', '#111827', '#1E293B', 'Obsidian')" class="finish-btn glass-panel p-3.5 rounded-xl border border-blue-500 flex items-center space-x-3 hover:border-blue-400 transition-all">
+                                <span class="w-6 h-6 rounded-full bg-slate-900 border border-slate-700"></span>
+                                <span class="text-sm font-medium text-white">Obsidian</span>
+                            </button>
+                            <button onclick="setFinish('titanium', '#8E8D8A', '#4A4A4A', 'Raw Titanium')" class="finish-btn glass-panel p-3.5 rounded-xl border border-aura-border flex items-center space-x-3 hover:border-blue-400 transition-all">
+                                <span class="w-6 h-6 rounded-full bg-stone-400 border border-stone-300"></span>
+                                <span class="text-sm font-medium text-white">Raw Titanium</span>
+                            </button>
+                            <button onclick="setFinish('gold', '#D4AF37', '#997A15', 'Celestial Gold')" class="finish-btn glass-panel p-3.5 rounded-xl border border-aura-border flex items-center space-x-3 hover:border-blue-400 transition-all">
+                                <span class="w-6 h-6 rounded-full bg-amber-500 border border-amber-300"></span>
+                                <span class="text-sm font-medium text-white">Celestial Gold</span>
+                            </button>
+                            <button onclick="setFinish('emerald', '#059669', '#064E3B', 'Emerald')" class="finish-btn glass-panel p-3.5 rounded-xl border border-aura-border flex items-center space-x-3 hover:border-blue-400 transition-all">
+                                <span class="w-6 h-6 rounded-full bg-emerald-600 border border-emerald-400"></span>
+                                <span class="text-sm font-medium text-white">Emerald</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Band Material Selection -->
+                    <div>
+                        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-4 flex items-center">
+                            <i data-lucide="layers" class="w-4 h-4 mr-2 text-emerald-400"></i> Band Style
+                        </h3>
+                        <div class="grid grid-cols-2 gap-3" id="bandOptions">
+                            <button onclick="setBand('Titanium Link', '#8E8D8A', 'metal')" class="band-btn glass-panel p-3.5 rounded-xl border border-blue-500 flex items-center space-x-3 hover:border-emerald-400 transition-all">
+                                <span class="w-4 h-4 rounded bg-stone-400"></span>
+                                <span class="text-sm font-medium text-white">Titanium Link</span>
+                            </button>
+                            <button onclick="setBand('Alpine Loop', '#374151', 'fabric')" class="band-btn glass-panel p-3.5 rounded-xl border border-aura-border flex items-center space-x-3 hover:border-emerald-400 transition-all">
+                                <span class="w-4 h-4 rounded bg-slate-700"></span>
+                                <span class="text-sm font-medium text-white">Alpine Loop</span>
+                            </button>
+                            <button onclick="setBand('Tuscan Leather', '#78350F', 'leather')" class="band-btn glass-panel p-3.5 rounded-xl border border-aura-border flex items-center space-x-3 hover:border-emerald-400 transition-all">
+                                <span class="w-4 h-4 rounded bg-amber-800"></span>
+                                <span class="text-sm font-medium text-white">Tuscan Leather</span>
+                            </button>
+                            <button onclick="setBand('Milanese Mesh', '#A1A1AA', 'mesh')" class="band-btn glass-panel p-3.5 rounded-xl border border-aura-border flex items-center space-x-3 hover:border-emerald-400 transition-all">
+                                <span class="w-4 h-4 rounded bg-zinc-300"></span>
+                                <span class="text-sm font-medium text-white">Milanese Mesh</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Selection Summary -->
+                    <div class="glass-panel p-4 rounded-xl border border-aura-border flex items-center justify-between">
+                        <div>
+                            <span class="text-xs text-slate-400 block">Current Configuration</span>
+                            <span id="summaryText" class="text-sm font-semibold text-white">Obsidian + Titanium Link</span>
+                            <span id="studioTotalPrice" class="mt-1 block text-sm font-bold text-emerald-400">$799.00</span>
+                        </div>
+                        <button onclick="openPreOrderModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition-colors">
+                            Order Custom
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERACTIVE HOTSPOTS SECTION -->
+    <section id="hotspots" class="py-24 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-semibold uppercase tracking-widest text-emerald-400">Precision Engineering</span>
+                <h2 class="font-display text-3xl sm:text-5xl font-bold text-white tracking-tight mt-2">Interactive Hardware Breakdown</h2>
+                <p class="mt-4 text-slate-400">Tap on any hotspot component to inspect our breakthroughs in micro-architecture.</p>
+            </div>
+
+            <!-- Hotspot Visualizer Card -->
+            <div class="relative glass-panel rounded-3xl p-8 border border-aura-border max-w-4xl mx-auto min-h-[480px] flex items-center justify-center">
+                <!-- Center Watch Representation -->
+                <div class="relative w-72 h-72 rounded-full border-8 border-slate-800 bg-slate-950 flex items-center justify-center shadow-2xl">
+                    <i data-lucide="activity" class="w-20 h-20 text-blue-500/40 animate-pulse"></i>
+
+                    <!-- Hotspot 1: Sapphire Crystal -->
+                    <button onclick="showHotspotInfo('sapphire')" class="absolute top-6 left-12 w-8 h-8 rounded-full bg-blue-500/20 border-2 border-blue-400 flex items-center justify-center animate-bounce hover:scale-125 transition-transform">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
+                    </button>
+
+                    <!-- Hotspot 2: Optic Sensor Array -->
+                    <button onclick="showHotspotInfo('sensor')" class="absolute bottom-10 right-12 w-8 h-8 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center animate-bounce hover:scale-125 transition-transform" style="animation-delay: 0.5s;">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                    </button>
+
+                    <!-- Hotspot 3: Digital Crown -->
+                    <button onclick="showHotspotInfo('crown')" class="absolute top-1/2 -right-4 -translate-y-1/2 w-8 h-8 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center animate-bounce hover:scale-125 transition-transform" style="animation-delay: 1s;">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                    </button>
+
+                    <!-- Hotspot 4: Dual Speaker & Mic -->
+                    <button onclick="showHotspotInfo('audio')" class="absolute bottom-8 left-10 w-8 h-8 rounded-full bg-purple-500/20 border-2 border-purple-400 flex items-center justify-center animate-bounce hover:scale-125 transition-transform" style="animation-delay: 1.5s;">
+                        <span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span>
+                    </button>
+                </div>
+
+                <!-- Info Modal Overlay for Hotspots -->
+                <div id="hotspotCard" class="absolute bottom-6 left-6 right-6 sm:left-auto sm:right-6 sm:w-80 glass-panel p-5 rounded-2xl border border-aura-border shadow-2xl transition-all duration-300">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 id="hotspotTitle" class="font-display font-bold text-white text-base">Sapphire Crystal Glass</h4>
+                        <span id="hotspotTag" class="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">Durability</span>
+                    </div>
+                    <p id="hotspotDesc" class="text-xs text-slate-300 leading-relaxed">
+                        Synthetic sapphire crystal second only to diamond in hardness. Scratch-proof protection with anti-reflective dual coating.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TECHNICAL SPECIFICATIONS BREAKDOWN -->
+    <section id="specs" class="py-24 bg-aura-card/30 border-y border-aura-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="font-display text-3xl sm:text-5xl font-bold text-white tracking-tight">Full Specifications</h2>
+                <p class="mt-4 text-slate-400">Every component crafted for uncompromised performance.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Display Spec -->
+                <div class="glass-panel p-8 rounded-3xl border border-aura-border hover:border-blue-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="monitor" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-white mb-2">Quantum Micro-LED</h3>
+                    <ul class="text-sm text-slate-300 space-y-3 font-light">
+                        <li class="flex items-center justify-between border-b border-aura-border/50 pb-2"><span>Resolution</span> <strong class="text-white">502 x 410 px</strong></li>
+                        <li class="flex items-center justify-between border-b border-aura-border/50 pb-2"><span>Brightness</span> <strong class="text-white">3,000 Nits Peak</strong></li>
+                        <li class="flex items-center justify-between border-b border-aura-border/50 pb-2"><span>Refresh Rate</span> <strong class="text-white">1 - 120Hz LTPO</strong></li>
+                        <li class="flex items-center justify-between"><span>Always-On</span> <strong class="text-emerald-400">Supported</strong></li>
+                    </ul>
+                </div>
+
+                <!-- Telemetry & Health Spec -->
+                <div class="glass-panel p-8 rounded-3xl border border-aura-border hover:border-emerald-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="heart-pulse" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-white mb-2">Bio-Optic Telemetry</h3>
+                    <ul class="text-sm text-slate-300 space-y-3 font-light">
+                        <li class="flex items-center justify-between border-b border-aura-border/50 pb-2"><span>ECG Sensor</span> <strong class="text-white">Medical Grade</strong></li>
+                        <li class="flex items-center justify-between border-b border-aura-border/50 pb-2"><span>SpO2 Oxygen</span> <strong class="text-white">Continuous</strong></li>
+                        <li class="flex items-center justify-between border-b border-aura-border/50 pb-2"><span>Skin Temp</span> <strong class="text-white">±0.01°C Precision</strong></li>
+                        <li class="flex items-center justify-between"><span>Sleep Stage</span> <strong class="text-emerald-400">AI Deep Telemetry</strong></li>
+                    </ul>
+                </div>
+
+                <!-- Connectivity & Power Spec -->
+                <div class="glass-panel p-8 rounded-3xl border border-aura-border hover:border-amber-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="zap" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-white mb-2">Power & Connectivity</h3>
+                    <ul class="text-sm text-slate-300 space-y-3 font-light">
+                        <li class="flex items-center justify-between border-b border-aura-border/50 pb-2"><span>Battery Life</span> <strong class="text-white">Up to 14 Days</strong></li>
+                        <li class="flex items-center justify-between border-b border-aura-border/50 pb-2"><span>Fast Charge</span> <strong class="text-white">0-80% in 25 mins</strong></li>
+                        <li class="flex items-center justify-between border-b border-aura-border/50 pb-2"><span>Cellular</span> <strong class="text-white">Dual eSIM 5G</strong></li>
+                        <li class="flex items-center justify-between"><span>Water Resistance</span> <strong class="text-emerald-400">100 Meters / 10 ATM</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODEL COMPARISON SECTION -->
+    <section id="compare" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-semibold uppercase tracking-widest text-blue-400">Find Your Match</span>
+                <h2 class="font-display text-3xl sm:text-5xl font-bold text-white tracking-tight mt-2">Compare Aura Lineup</h2>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[600px]">
+                    <thead>
+                        <tr class="border-b border-aura-border">
+                            <th class="p-4 text-slate-400 font-normal">Feature</th>
+                            <th class="p-4 text-white font-display font-bold text-lg">Horizon Vision (Flagship)</th>
+                            <th class="p-4 text-slate-300 font-display font-semibold text-lg">Horizon Sport</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-aura-border/50 text-sm">
+                        <tr>
+                            <td class="p-4 text-slate-400">Case Material</td>
+                            <td class="p-4 text-emerald-400 font-semibold">Aerospace Grade 5 Titanium</td>
+                            <td class="p-4 text-slate-300">Recycled Armor Aluminum</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 text-slate-400">Display Tech</td>
+                            <td class="p-4 text-white font-medium">3,000 Nit Micro-LED Sapphire</td>
+                            <td class="p-4 text-slate-300">2,000 Nit AMOLED Crystal</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 text-slate-400">Battery Longevity</td>
+                            <td class="p-4 text-white font-medium">14 Days Normal / 30 Days Eco</td>
+                            <td class="p-4 text-slate-300">7 Days Normal / 14 Days Eco</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 text-slate-400">Satellite Telemetry</td>
+                            <td class="p-4 text-emerald-400 font-semibold">Dual-Frequency SOS GPS</td>
+                            <td class="p-4 text-slate-300">Standard Single GPS</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 text-slate-400">Starting Price</td>
+                            <td class="p-4 text-blue-400 font-bold text-base">$799 USD</td>
+                            <td class="p-4 text-slate-300 font-bold text-base">$499 USD</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-aura-border bg-aura-card/50 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+                    <i data-lucide="watch" class="w-4 h-4"></i>
+                </div>
+                <span class="font-display font-bold text-lg text-white">AURA HORIZON</span>
+            </div>
+            <p class="text-xs text-slate-400 text-center">
+                © 2026 Aura Vision Inc. All rights reserved. Designed for elite performance.
+            </p>
+            <div class="flex items-center space-x-6 text-xs text-slate-400">
+                <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                <a href="#" class="hover:text-white transition-colors">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- PRE-ORDER / CUSTOMIZATION MODAL -->
+    <div id="preOrderModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/80 backdrop-blur-md p-4 sm:p-6 flex items-center justify-center" data-state="configuring">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-aura-border relative shadow-2xl animate-fade-in">
+            <button onclick="closePreOrderModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white p-2 rounded-full hover:bg-aura-card">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <h3 class="font-display text-2xl font-bold text-white mb-2">Reserve Aura Horizon Vision</h3>
+            <p class="text-xs text-slate-400 mb-6">Select your options and secure priority shipping.</p>
+
+            <form id="preOrderForm" onsubmit="handlePreOrderSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Watch Size</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <label class="flex items-center justify-between p-3 rounded-xl glass-panel border border-blue-500 cursor-pointer">
+                            <input type="radio" name="size" value="42" checked class="text-blue-500 focus:ring-0">
+                            <span class="text-sm font-medium text-white">42mm</span>
+                            <span class="text-xs text-slate-400">$799</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-xl glass-panel border border-aura-border cursor-pointer">
+                            <input type="radio" name="size" value="46" class="text-blue-500 focus:ring-0">
+                            <span class="text-sm font-medium text-white">46mm</span>
+                            <span class="text-xs text-slate-400">$899</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-xl glass-panel border border-aura-border cursor-pointer">
+                            <input type="radio" name="size" value="49" class="text-blue-500 focus:ring-0">
+                            <span class="text-sm font-medium text-white">49mm</span>
+                            <span class="text-xs text-slate-400">$1,099</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Connectivity</label>
+                    <select id="connectivityOption" class="w-full bg-aura-card border border-aura-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                        <option value="gps">GPS</option>
+                        <option value="satellite">5G Satellite (+$100)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Wristband</label>
+                    <select id="preOrderBandOption" class="w-full bg-aura-card border border-aura-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                        <option value="Titanium Link">Titanium Link (Included)</option>
+                        <option value="Alpine Loop">Alpine Loop (Included)</option>
+                        <option value="Milanese Mesh">Milanese Mesh (Included)</option>
+                        <option value="Tuscan Leather">Tuscan Leather (Included)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="paymentMethodOption" class="block text-xs font-semibold uppercase text-slate-300 mb-2">Payment Preference</label>
+                    <select id="paymentMethodOption" name="payment_preference" required class="w-full bg-aura-card border border-aura-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                        <option value="credit_card">Credit / Debit Card</option>
+                        <option value="apple_pay">Apple Pay / Google Pay</option>
+                        <option value="bank_transfer">Direct Bank Wire Transfer</option>
+                    </select>
+                    <p class="mt-2 text-xs text-slate-500">Preference only. No payment is taken now; final checkout or wire instructions will follow by email.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Full Name</label>
+                    <input id="preOrderName" name="customerName" type="text" autocomplete="name" required placeholder="John Doe" class="w-full bg-aura-card border border-aura-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Email Address</label>
+                    <input id="preOrderEmail" name="customerEmail" type="email" autocomplete="email" required placeholder="john@example.com" class="w-full bg-aura-card border border-aura-border rounded-xl p-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+
+                <p class="text-xs leading-relaxed text-slate-500">Submitting sends your contact and build details to FormSubmit for reservation handling. FormSubmit will also be asked to email a copy of the reservation to the address you provide.</p>
+                <p id="preOrderSubmissionStatus" class="hidden text-sm text-rose-300" role="alert" aria-live="assertive"></p>
+
+                <div class="pt-4 flex items-center justify-between border-t border-aura-border">
+                    <div>
+                        <span class="text-xs text-slate-400 block">Total Due Today</span>
+                        <span id="modalTotalPrice" class="text-2xl font-display font-bold text-emerald-400">$799.00</span>
+                    </div>
+                    <button id="completePreOrderButton" type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 text-white font-semibold text-sm hover:opacity-90 transition-opacity shadow-lg shadow-blue-500/25">
+                        Complete Secure Pre-Order
+                    </button>
+                </div>
+            </form>
+            <section id="preOrderInvoice" class="hidden space-y-5" aria-live="polite" aria-labelledby="invoiceTitle">
+                <div class="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5">
+                    <div class="flex items-center gap-3">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-300">
+                            <i data-lucide="receipt" class="h-5 w-5"></i>
+                        </span>
+                        <div>
+                            <h4 id="invoiceTitle" class="font-display text-lg font-bold text-white">Pre-Order Reservation Summary</h4>
+                            <p class="text-xs text-slate-400">Review your reservation details. Payment remains pending until securely verified.</p>
+                        </div>
+                    </div>
+                </div>
+                <dl class="space-y-3 rounded-2xl border border-aura-border bg-aura-card/70 p-5 text-sm">
+                    <div class="flex justify-between gap-4"><dt class="text-slate-400">Customer</dt><dd id="invoiceCustomerName" class="text-right font-medium text-white"></dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-slate-400">Email</dt><dd id="invoiceCustomerEmail" class="break-all text-right font-medium text-white"></dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-slate-400">Watch size</dt><dd id="invoiceSize" class="text-right font-medium text-white"></dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-slate-400">Case finish</dt><dd id="invoiceFinish" class="text-right font-medium text-white"></dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-slate-400">Wristband</dt><dd id="invoiceBand" class="text-right font-medium text-white"></dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-slate-400">Connectivity</dt><dd id="invoiceConnectivity" class="text-right font-medium text-white"></dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-slate-400">Laser engraving</dt><dd id="invoiceEngraving" class="text-right font-medium text-white"></dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-slate-400">Payment preference</dt><dd id="invoicePaymentMethod" class="text-right font-medium text-white"></dd></div>
+                    <div class="flex justify-between gap-4 border-t border-aura-border pt-3"><dt class="text-slate-400">Reservation total</dt><dd id="invoiceTotal" class="text-right font-display text-lg font-bold text-emerald-400"></dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-slate-400">Payment status</dt><dd id="invoicePaymentStatus" class="text-right font-semibold text-amber-300">Pending Verification / Processing On Dispatch</dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-slate-400">Priority shipping</dt><dd class="max-w-[65%] text-right text-slate-200">Estimated dispatch 2–3 weeks after payment verification</dd></div>
+                </dl>
+                <p id="invoiceThankYouInstructions" class="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 text-sm leading-relaxed text-slate-200">Thank you for reserving your Aura Horizon Vision! Your order configuration is locked in. Our sales team will reach out directly to your provided email address with final checkout link, wire instructions, and priority shipping verification prior to dispatch.</p>
+                <p class="text-xs leading-relaxed text-slate-500">Your payment preference is not a payment. No payment is processed until you complete checkout using instructions provided by the sales team.</p>
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="editPreOrder()" class="rounded-xl border border-aura-border px-4 py-3 text-sm font-semibold text-slate-200 hover:border-blue-400">Edit order</button>
+                    <button type="button" onclick="closePreOrderModal()" class="rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-5 py-3 text-sm font-semibold text-white">Done</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT ENGINE & CANVAS RENDERING -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Three.js PBR smartwatch preview with a procedural studio environment.
+        const canvas = document.getElementById('watchCanvas');
+        const studioCanvas = document.getElementById('studioWatchCanvas');
+        const renderError = document.getElementById('watchRenderError');
+        const studioRenderError = document.getElementById('studioRenderError');
+        let renderer;
+        let studioRenderer;
+        let scene;
+        let camera;
+        let studioCamera;
+        let watchRoot;
+        let caseMaterial;
+        let crownMaterial;
+        let bandGroup;
+        let dialTexture;
+        let engravingTexture;
+        let engravingCanvas;
+        let engravingContext;
+        let currentFace = 'minimal';
+        let bandStyle = 'metal';
+        let bandColor = '#8E8D8A';
+        const cameraTarget = new THREE.Vector3(0, 0, 0);
+        const studioCameraTarget = new THREE.Vector3(0, 0, 0);
+        const caseColor = '#111827';
+        const crownColor = '#1E293B';
+        const defaultCameraPosition = { x: 3, y: 2.3, z: 9.8 };
+        const studioDefaultCameraPosition = { x: 2.5, y: 1.9, z: 8 };
+
+        function roundedShape(width, height, radius) {
+            const x = -width / 2;
+            const y = -height / 2;
+            const shape = new THREE.Shape();
+            shape.moveTo(x + radius, y);
+            shape.lineTo(x + width - radius, y);
+            shape.quadraticCurveTo(x + width, y, x + width, y + radius);
+            shape.lineTo(x + width, y + height - radius);
+            shape.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            shape.lineTo(x + radius, y + height);
+            shape.quadraticCurveTo(x, y + height, x, y + height - radius);
+            shape.lineTo(x, y + radius);
+            shape.quadraticCurveTo(x, y, x + radius, y);
+            return shape;
+        }
+
+        function makeStudioEnvironment() {
+            const environmentCanvas = document.createElement('canvas');
+            environmentCanvas.width = 1024;
+            environmentCanvas.height = 512;
+            const environmentContext = environmentCanvas.getContext('2d');
+            const gradient = environmentContext.createLinearGradient(0, 0, 0, 512);
+            gradient.addColorStop(0, '#18243A');
+            gradient.addColorStop(0.42, '#B5C4D4');
+            gradient.addColorStop(0.5, '#FFFFFF');
+            gradient.addColorStop(0.58, '#77849A');
+            gradient.addColorStop(1, '#101827');
+            environmentContext.fillStyle = gradient;
+            environmentContext.fillRect(0, 0, 1024, 512);
+            environmentContext.fillStyle = '#FFFFFF';
+            environmentContext.fillRect(120, 85, 110, 240);
+            environmentContext.fillRect(500, 55, 62, 280);
+            environmentContext.fillStyle = '#54A7FF';
+            environmentContext.fillRect(720, 100, 90, 180);
+            environmentContext.fillStyle = '#D4AF37';
+            environmentContext.fillRect(880, 140, 44, 130);
+
+            const environmentTexture = new THREE.CanvasTexture(environmentCanvas);
+            environmentTexture.mapping = THREE.EquirectangularReflectionMapping;
+            const pmrem = new THREE.PMREMGenerator(renderer);
+            const environmentMap = pmrem.fromEquirectangular(environmentTexture).texture;
+            scene.environment = environmentMap;
+            environmentTexture.dispose();
+            pmrem.dispose();
+        }
+
+        function drawFaceTexture() {
+            const faceCanvas = document.createElement('canvas');
+            faceCanvas.width = 512;
+            faceCanvas.height = 512;
+            const faceContext = faceCanvas.getContext('2d');
+            faceContext.fillStyle = '#080D18';
+            faceContext.fillRect(0, 0, 512, 512);
+            const glow = faceContext.createRadialGradient(256, 225, 12, 256, 256, 260);
+            glow.addColorStop(0, '#172947');
+            glow.addColorStop(1, '#080D18');
+            faceContext.fillStyle = glow;
+            faceContext.fillRect(0, 0, 512, 512);
+            faceContext.textAlign = 'center';
+            faceContext.fillStyle = '#62B7FF';
+            faceContext.font = '600 30px Inter, sans-serif';
+            faceContext.fillText('AURA', 256, 112);
+
+            if (currentFace === 'chronograph') {
+                faceContext.strokeStyle = '#D4AF37';
+                faceContext.lineWidth = 5;
+                faceContext.beginPath();
+                faceContext.arc(256, 270, 120, 0, Math.PI * 2);
+                faceContext.stroke();
+                [0, 1, 2].forEach((index) => {
+                    const x = 166 + index * 90;
+                    faceContext.beginPath();
+                    faceContext.arc(x, 365, 27, 0, Math.PI * 2);
+                    faceContext.strokeStyle = '#5F789B';
+                    faceContext.lineWidth = 3;
+                    faceContext.stroke();
+                });
+            } else if (currentFace === 'telemetry') {
+                faceContext.fillStyle = '#00FA9A';
+                faceContext.font = '700 22px Inter, sans-serif';
+                faceContext.fillText('HEART RATE', 256, 190);
+                faceContext.font = '700 72px Inter, sans-serif';
+                faceContext.fillText('68', 256, 280);
+                faceContext.font = '500 22px Inter, sans-serif';
+                faceContext.fillText('BPM   ·   O₂ 98%', 256, 342);
+                faceContext.strokeStyle = '#00FA9A';
+                faceContext.lineWidth = 5;
+                faceContext.beginPath();
+                faceContext.moveTo(105, 410);
+                faceContext.lineTo(175, 410);
+                faceContext.lineTo(200, 370);
+                faceContext.lineTo(232, 448);
+                faceContext.lineTo(270, 392);
+                faceContext.lineTo(302, 410);
+                faceContext.lineTo(407, 410);
+                faceContext.stroke();
+            } else {
+                faceContext.fillStyle = '#FFFFFF';
+                faceContext.font = '700 78px Inter, sans-serif';
+                faceContext.fillText('10:42', 256, 285);
+                faceContext.fillStyle = '#00FA9A';
+                faceContext.font = '500 24px Inter, sans-serif';
+                faceContext.fillText('THU 24 OCT  ·  68 BPM', 256, 345);
+                faceContext.beginPath();
+                faceContext.arc(256, 412, 17, 0, Math.PI * 2);
+                faceContext.fill();
+            }
+            if (dialTexture) dialTexture.dispose();
+            dialTexture = new THREE.CanvasTexture(faceCanvas);
+            dialTexture.encoding = THREE.sRGBEncoding;
+            const screen = watchRoot.getObjectByName('dial-screen');
+            if (screen) {
+                screen.material.map = dialTexture;
+                screen.material.needsUpdate = true;
+            }
+        }
+
+        function createTextileTexture(color, style) {
+            const textureCanvas = document.createElement('canvas');
+            textureCanvas.width = 128;
+            textureCanvas.height = 128;
+            const textureContext = textureCanvas.getContext('2d');
+            textureContext.fillStyle = color;
+            textureContext.fillRect(0, 0, 128, 128);
+            textureContext.strokeStyle = style === 'fabric' ? '#FFFFFF35' : '#FFFFFF55';
+            textureContext.lineWidth = style === 'mesh' ? 2 : 1;
+            for (let position = 0; position < 128; position += style === 'mesh' ? 6 : 4) {
+                textureContext.beginPath();
+                textureContext.moveTo(position, 0);
+                textureContext.lineTo(position, 128);
+                textureContext.moveTo(0, position);
+                textureContext.lineTo(128, position);
+                textureContext.stroke();
+            }
+            const texture = new THREE.CanvasTexture(textureCanvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(2, 3);
+            texture.encoding = THREE.sRGBEncoding;
+            return texture;
+        }
+
+        function createBandMaterial(style, color) {
+            const isMetal = style === 'metal' || style === 'mesh';
+            const texture = isMetal ? null : createTextileTexture(color, style);
+            return new THREE.MeshStandardMaterial({
+                color: isMetal ? new THREE.Color(color).multiplyScalar(0.72) : '#FFFFFF',
+                map: texture,
+                bumpMap: texture,
+                bumpScale: style === 'leather' ? 0.035 : 0.06,
+                metalness: isMetal ? 0.76 : 0.02,
+                roughness: style === 'leather' ? 0.38 : style === 'fabric' ? 0.88 : 0.35,
+                envMapIntensity: isMetal ? 0.8 : 1.2
+            });
+        }
+
+        function addBandStrap(yCenter, strapMaterial, style) {
+            const top = yCenter > 0;
+            const length = 1;
+            const width = 0.72;
+            const strap = new THREE.Group();
+            strap.position.y = yCenter;
+            const shape = roundedShape(width, length, 0.16);
+            const geometry = new THREE.ExtrudeGeometry(shape, { depth: 0.12, bevelEnabled: true, bevelSegments: 3, bevelSize: 0.035, bevelThickness: 0.035 });
+            const main = new THREE.Mesh(geometry, strapMaterial);
+            main.position.z = 0.31;
+            main.castShadow = true;
+            main.receiveShadow = true;
+            strap.add(main);
+
+            if (style === 'metal') {
+                const linkMaterial = strapMaterial.clone();
+                for (let row = 0; row < 7; row += 1) {
+                    const linkGeometry = new THREE.BoxGeometry(0.66, 0.13, 0.08);
+                    const link = new THREE.Mesh(linkGeometry, linkMaterial);
+                    link.position.set(0, (top ? 1 : -1) * (row * 0.16 - 0.48), 0.24);
+                    link.castShadow = true;
+                    strap.add(link);
+                }
+            } else if (style === 'leather') {
+                const stitchMaterial = new THREE.MeshStandardMaterial({ color: '#D7B078', roughness: 0.7 });
+                [-0.27, 0.27].forEach((x) => {
+                    const points = [];
+                    for (let row = 0; row <= 18; row += 1) {
+                        points.push(new THREE.Vector3(x, (top ? 1 : -1) * (row * 0.055 - 0.48), 0.245));
+                    }
+                    const seam = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), stitchMaterial);
+                    strap.add(seam);
+                    for (let row = 0; row < 17; row += 1) {
+                        const stitch = new THREE.Mesh(new THREE.SphereGeometry(0.018, 6, 6), stitchMaterial);
+                        stitch.position.copy(points[row]);
+                        strap.add(stitch);
+                    }
+                });
+            } else if (style === 'mesh') {
+                const wireMaterial = new THREE.MeshStandardMaterial({ color: '#E2E8F0', metalness: 0.95, roughness: 0.23, envMapIntensity: 2 });
+                for (let row = 0; row < 10; row += 1) {
+                    const y = (top ? 1 : -1) * (row * 0.12 - 0.54);
+                    const crossbar = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.018, 0.1), wireMaterial);
+                    crossbar.position.set(0, y, 0.24);
+                    strap.add(crossbar);
+                }
+                [-0.31, -0.2, -0.09, 0.02, 0.13, 0.24, 0.31].forEach((x) => {
+                    const wire = new THREE.Mesh(new THREE.BoxGeometry(0.014, 1.12, 0.08), wireMaterial);
+                    wire.position.set(x, 0, 0.24);
+                    strap.add(wire);
+                });
+            } else {
+                const weaveMaterial = new THREE.MeshStandardMaterial({ color: '#FFFFFF', roughness: 0.85 });
+                for (let row = 0; row < 10; row += 1) {
+                    const thread = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.012, 0.012), weaveMaterial);
+                    thread.position.set(0, (top ? 1 : -1) * (row * 0.12 - 0.54), 0.24);
+                    strap.add(thread);
+                }
+            }
+            return strap;
+        }
+
+        function swapPhysicalBand(style, color) {
+            if (bandGroup) {
+                watchRoot.remove(bandGroup);
+                bandGroup.traverse((item) => {
+                    if (item.geometry) item.geometry.dispose();
+                    if (item.material) {
+                        if (item.material.map) item.material.map.dispose();
+                        item.material.dispose();
+                    }
+                });
+            }
+            const bandMaterial = createBandMaterial(style, color);
+            bandGroup = new THREE.Group();
+            bandGroup.name = 'watch-band';
+            bandGroup.add(addBandStrap(1.48, bandMaterial, style));
+            bandGroup.add(addBandStrap(-1.48, bandMaterial, style));
+            watchRoot.add(bandGroup);
+            bandStyle = style;
+            bandColor = color;
+            gsap.fromTo(bandGroup.scale, { x: 0.92, y: 0.92, z: 0.92 }, { x: 1, y: 1, z: 1, duration: 0.45, ease: 'power2.out' });
+        }
+
+        function updateEngraving(text) {
+            if (!engravingContext || !engravingTexture) return;
+            engravingContext.clearRect(0, 0, engravingCanvas.width, engravingCanvas.height);
+            engravingContext.fillStyle = '#BFC5CE';
+            engravingContext.fillRect(0, 0, engravingCanvas.width, engravingCanvas.height);
+            engravingContext.fillStyle = '#303943';
+            engravingContext.textAlign = 'center';
+            engravingContext.textBaseline = 'middle';
+            engravingContext.font = '600 62px Inter, sans-serif';
+            engravingContext.fillText(text.trim().slice(0, 12), engravingCanvas.width / 2, engravingCanvas.height / 2);
+            engravingTexture.needsUpdate = true;
+        }
+
+        function initializeWatchScene() {
+            if (!window.THREE || !window.gsap) throw new Error('Three.js or GSAP did not load.');
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            canvas.appendChild(renderer.domElement);
+            renderer.domElement.className = 'w-full h-full touch-none';
+            renderer.domElement.style.display = 'block';
+
+            studioRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            studioRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            studioRenderer.outputEncoding = THREE.sRGBEncoding;
+            studioRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+            studioRenderer.toneMappingExposure = 1.2;
+            studioRenderer.shadowMap.enabled = true;
+            studioRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            studioCanvas.appendChild(studioRenderer.domElement);
+            studioRenderer.domElement.className = 'w-full h-full touch-none';
+            studioRenderer.domElement.style.display = 'block';
+
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+            camera.position.set(defaultCameraPosition.x, defaultCameraPosition.y, defaultCameraPosition.z);
+            studioCamera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+            studioCamera.position.set(studioDefaultCameraPosition.x, studioDefaultCameraPosition.y, studioDefaultCameraPosition.z);
+            scene.add(new THREE.HemisphereLight('#DCEBFF', '#101522', 1));
+            const keyLight = new THREE.DirectionalLight('#FFFFFF', 2);
+            keyLight.position.set(-4, 6, 7);
+            keyLight.castShadow = true;
+            scene.add(keyLight);
+            const rimLight = new THREE.DirectionalLight('#59AFFF', 1);
+            rimLight.position.set(5, 2, -4);
+            scene.add(rimLight);
+            makeStudioEnvironment();
+
+            watchRoot = new THREE.Group();
+            watchRoot.rotation.x = -0.08;
+            scene.add(watchRoot);
+            caseMaterial = new THREE.MeshStandardMaterial({ color: caseColor, metalness: 0.78, roughness: 0.28, envMapIntensity: 1.2 });
+            crownMaterial = new THREE.MeshStandardMaterial({ color: crownColor, metalness: 0.95, roughness: 0.2, envMapIntensity: 2.3 });
+            const caseGeometry = new THREE.ExtrudeGeometry(roundedShape(1.95, 2.3, 0.42), { depth: 0.28, bevelEnabled: true, bevelSegments: 6, bevelSize: 0.065, bevelThickness: 0.055, curveSegments: 16 });
+            const watchCase = new THREE.Mesh(caseGeometry, caseMaterial);
+            watchCase.castShadow = true;
+            watchCase.receiveShadow = true;
+            watchRoot.add(watchCase);
+
+            const screenGeometry = new THREE.ExtrudeGeometry(roundedShape(1.66, 2.0, 0.34), { depth: 0.025, bevelEnabled: true, bevelSegments: 4, bevelSize: 0.018, bevelThickness: 0.012 });
+            const screenBacking = new THREE.Mesh(screenGeometry, new THREE.MeshStandardMaterial({ color: '#0B101A', metalness: 0.2, roughness: 0.24 }));
+            screenBacking.position.set(0, 0, 0.315);
+            watchRoot.add(screenBacking);
+            const faceCanvas = document.createElement('canvas');
+            faceCanvas.width = 512;
+            faceCanvas.height = 512;
+            dialTexture = new THREE.CanvasTexture(faceCanvas);
+            dialTexture.encoding = THREE.sRGBEncoding;
+            const dialMaterial = new THREE.MeshBasicMaterial({ map: dialTexture });
+            const dial = new THREE.Mesh(new THREE.PlaneGeometry(1.58, 1.92), dialMaterial);
+            dial.name = 'dial-screen';
+            dial.position.set(0, 0, 0.36);
+            watchRoot.add(dial);
+            const glass = new THREE.Mesh(
+                new THREE.PlaneGeometry(1.62, 1.96),
+                new THREE.MeshPhysicalMaterial({ color: '#D9E9FF', metalness: 0.1, roughness: 0.08, transmission: 0.16, transparent: true, opacity: 0.18, clearcoat: 1, clearcoatRoughness: 0.05 })
+            );
+            glass.position.set(0, 0, 0.38);
+            watchRoot.add(glass);
+
+            const lugsGeometry = new THREE.BoxGeometry(0.24, 0.28, 0.28);
+            [-1, 1].forEach((direction) => {
+                [-0.48, 0.48].forEach((x) => {
+                    const lug = new THREE.Mesh(lugsGeometry, caseMaterial);
+                    lug.position.set(x, direction * 1.17, 0.11);
+                    lug.castShadow = true;
+                    watchRoot.add(lug);
+                });
+            });
+
+            const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.34, 32), crownMaterial);
+            crown.rotation.z = Math.PI / 2;
+            crown.position.set(1.1, 0.38, 0.13);
+            crown.castShadow = true;
+            watchRoot.add(crown);
+            for (let ridge = -2; ridge <= 2; ridge += 1) {
+                const ring = new THREE.Mesh(new THREE.TorusGeometry(0.155, 0.012, 6, 28), crownMaterial);
+                ring.rotation.y = Math.PI / 2;
+                ring.position.set(1.1 + ridge * 0.052, 0.38, 0.13);
+                watchRoot.add(ring);
+            }
+            const sideButton = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.2, 24), crownMaterial);
+            sideButton.rotation.z = Math.PI / 2;
+            sideButton.position.set(1.08, -0.12, 0.13);
+            watchRoot.add(sideButton);
+
+            engravingCanvas = document.createElement('canvas');
+            engravingCanvas.width = 512;
+            engravingCanvas.height = 180;
+            engravingContext = engravingCanvas.getContext('2d');
+            engravingTexture = new THREE.CanvasTexture(engravingCanvas);
+            engravingTexture.encoding = THREE.sRGBEncoding;
+            const backplate = new THREE.Mesh(
+                new THREE.PlaneGeometry(1.36, 0.48),
+                new THREE.MeshStandardMaterial({ color: '#BFC5CE', metalness: 0.82, roughness: 0.34, map: engravingTexture, envMapIntensity: 1.7 })
+            );
+            backplate.rotation.y = Math.PI;
+            backplate.position.set(0, 0, -0.065);
+            watchRoot.add(backplate);
+            updateEngraving('');
+            swapPhysicalBand('metal', '#8E8D8A');
+            drawFaceTexture();
+            resizeWatchRenderer();
+            renderer.setAnimationLoop(() => {
+                camera.lookAt(cameraTarget);
+                renderer.render(scene, camera);
+            });
+            studioRenderer.setAnimationLoop(() => {
+                studioCamera.lookAt(studioCameraTarget);
+                studioRenderer.render(scene, studioCamera);
+            });
+        }
+
+        let draggingWatch = false;
+        let cameraTweenActive = false;
+        let lastPointerX = 0;
+        let lastPointerY = 0;
+
+        function resizeWatchRenderer() {
+            if (!renderer || !camera) return;
+            const bounds = canvas.getBoundingClientRect();
+            if (bounds.width && bounds.height) {
+                renderer.setSize(bounds.width, bounds.height, false);
+                camera.aspect = bounds.width / bounds.height;
+                camera.updateProjectionMatrix();
+            }
+            const studioBounds = studioCanvas.getBoundingClientRect();
+            if (studioBounds.width && studioBounds.height) {
+                studioRenderer.setSize(studioBounds.width, studioBounds.height, false);
+                studioCamera.aspect = studioBounds.width / studioBounds.height;
+                studioCamera.updateProjectionMatrix();
+            }
+        }
+
+        function focusWatch(view) {
+            if (!studioCamera || !watchRoot) return;
+            const presets = {
+                crown: { position: { x: 4.15, y: 0.3, z: 3.15 }, target: { x: 0.85, y: 0.25, z: 0 } },
+                strap: { position: { x: 0.7, y: -3.25, z: 3.3 }, target: { x: 0, y: -1.2, z: 0 } },
+                front: { position: { x: 0, y: 0.15, z: 5.35 }, target: { x: 0, y: 0, z: 0 } },
+                reset: { position: studioDefaultCameraPosition, target: { x: 0, y: 0, z: 0 }, rotation: { x: -0.08, y: 0, z: 0 } }
+            };
+            const preset = presets[view];
+            if (!preset) return;
+            cameraTweenActive = true;
+            const timeline = gsap.timeline({
+                defaults: { duration: 1.05, ease: 'power3.inOut' },
+                onComplete: () => { cameraTweenActive = false; }
+            });
+            timeline.to(studioCamera.position, preset.position, 0);
+            timeline.to(studioCameraTarget, preset.target, 0);
+            if (preset.rotation) timeline.to(watchRoot.rotation, preset.rotation, 0);
+        }
+
+        function setWatchFace(style) {
+            if (!['minimal', 'chronograph', 'telemetry'].includes(style)) return;
+            currentFace = style;
+            drawFaceTexture();
+            document.querySelectorAll('.face-btn').forEach((button) => {
+                const isSelected = button.getAttribute('onclick').includes(`'${style}'`);
+                button.classList.toggle('border-blue-500', isSelected);
+                button.classList.toggle('border-aura-border', !isSelected);
+            });
+        }
+
+        canvas.addEventListener('pointerdown', (event) => {
+            draggingWatch = true;
+            lastPointerX = event.clientX;
+            lastPointerY = event.clientY;
+            canvas.setPointerCapture(event.pointerId);
+        });
+        canvas.addEventListener('pointermove', (event) => {
+            if (!draggingWatch || !watchRoot) return;
+            const deltaX = event.clientX - lastPointerX;
+            const deltaY = event.clientY - lastPointerY;
+            lastPointerX = event.clientX;
+            lastPointerY = event.clientY;
+            watchRoot.rotation.y += deltaX * 0.008;
+            watchRoot.rotation.x = Math.max(-0.45, Math.min(0.45, watchRoot.rotation.x + deltaY * 0.004));
+        });
+        ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((eventName) => {
+            canvas.addEventListener(eventName, () => { draggingWatch = false; });
+        });
+        canvas.style.touchAction = 'none';
+        let draggingStudioWatch = false;
+        let studioPointerX = 0;
+        let studioPointerY = 0;
+        studioCanvas.addEventListener('pointerdown', (event) => {
+            draggingStudioWatch = true;
+            studioPointerX = event.clientX;
+            studioPointerY = event.clientY;
+            studioCanvas.setPointerCapture(event.pointerId);
+        });
+        studioCanvas.addEventListener('pointermove', (event) => {
+            if (!draggingStudioWatch || !watchRoot) return;
+            watchRoot.rotation.y += (event.clientX - studioPointerX) * 0.008;
+            watchRoot.rotation.x = Math.max(-0.45, Math.min(0.45, watchRoot.rotation.x + (event.clientY - studioPointerY) * 0.004));
+            studioPointerX = event.clientX;
+            studioPointerY = event.clientY;
+        });
+        ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((eventName) => {
+            studioCanvas.addEventListener(eventName, () => { draggingStudioWatch = false; });
+        });
+        studioCanvas.style.touchAction = 'none';
+        window.addEventListener('resize', resizeWatchRenderer);
+        if ('ResizeObserver' in window) {
+            const renderResizeObserver = new ResizeObserver(resizeWatchRenderer);
+            renderResizeObserver.observe(canvas);
+            renderResizeObserver.observe(studioCanvas);
+        }
+
+        try {
+            initializeWatchScene();
+        } catch (error) {
+            console.error('Unable to initialize the 3D watch preview:', error);
+            renderError.classList.remove('hidden');
+            studioRenderError.classList.remove('hidden');
+        }
+        document.getElementById('engravingInput').addEventListener('input', (event) => updateEngraving(event.target.value));
+
+        // Customizer Controls Scripting
+        let currentFinish = 'Obsidian';
+        let currentBand = 'Titanium Link';
+
+        function setFinish(key, borderHex, crownHex, name) {
+            const glow = document.getElementById('customizerGlow');
+
+            glow.style.backgroundColor = borderHex;
+
+            if (caseMaterial && crownMaterial) {
+                const nextCaseColor = new THREE.Color(borderHex);
+                const nextCrownColor = new THREE.Color(crownHex);
+                gsap.to(caseMaterial.color, { r: nextCaseColor.r, g: nextCaseColor.g, b: nextCaseColor.b, duration: 0.45, ease: 'power2.out' });
+                gsap.to(crownMaterial.color, { r: nextCrownColor.r, g: nextCrownColor.g, b: nextCrownColor.b, duration: 0.45, ease: 'power2.out' });
+            }
+
+            currentFinish = name;
+            document.querySelectorAll('.finish-btn').forEach((button) => {
+                button.classList.toggle('border-blue-500', button.getAttribute('onclick').includes(`'${key}'`));
+                button.classList.toggle('border-aura-border', !button.getAttribute('onclick').includes(`'${key}'`));
+            });
+            updateSummary();
+        }
+
+        function setBand(name, hex, style) {
+            currentBand = name;
+            document.querySelectorAll('.band-btn').forEach((button) => {
+                button.classList.toggle('border-blue-500', button.getAttribute('onclick').includes(`'${name}'`));
+                button.classList.toggle('border-aura-border', !button.getAttribute('onclick').includes(`'${name}'`));
+            });
+            const bandSelector = document.getElementById('preOrderBandOption');
+            if (bandSelector.value !== name) bandSelector.value = name;
+            if (watchRoot) swapPhysicalBand(style, hex);
+            updatePreOrderPrice();
+            updateSummary();
+        }
+
+        function updateSummary() {
+            document.getElementById('summaryText').innerText = `${currentFinish} + ${currentBand}`;
+            const badgeText = `${currentFinish} · ${currentBand}`;
+            document.getElementById('heroVariantBadge').innerText = badgeText;
+        }
+
+        const basePrices = { 42: 799, 46: 899, 49: 1099 };
+        const bandSurcharges = { 'Titanium Link': 0, 'Alpine Loop': 0, 'Milanese Mesh': 0, 'Tuscan Leather': 0 };
+        const priceFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+
+        function updatePreOrderPrice() {
+            const size = document.querySelector('input[name="size"]:checked').value;
+            const connectivitySurcharge = document.getElementById('connectivityOption').value === 'satellite' ? 100 : 0;
+            const selectedBand = document.getElementById('preOrderBandOption').value;
+            const total = basePrices[size] + connectivitySurcharge + (bandSurcharges[selectedBand] || 0);
+            document.getElementById('modalTotalPrice').textContent = priceFormatter.format(total);
+            document.getElementById('navPrice').textContent = priceFormatter.format(total).replace('.00', '');
+            document.getElementById('studioTotalPrice').textContent = priceFormatter.format(total);
+
+            document.querySelectorAll('input[name="size"]').forEach((input) => {
+                const label = input.closest('label');
+                label.classList.toggle('border-blue-500', input.checked);
+                label.classList.toggle('border-aura-border', !input.checked);
+            });
+        }
+
+        document.querySelectorAll('input[name="size"]').forEach((input) => input.addEventListener('change', updatePreOrderPrice));
+        document.getElementById('connectivityOption').addEventListener('change', updatePreOrderPrice);
+        document.getElementById('preOrderBandOption').addEventListener('change', (event) => {
+            const bands = {
+                'Titanium Link': ['#8E8D8A', 'metal'],
+                'Alpine Loop': ['#374151', 'fabric'],
+                'Milanese Mesh': ['#A1A1AA', 'mesh'],
+                'Tuscan Leather': ['#78350F', 'leather']
+            };
+            const [color, style] = bands[event.target.value];
+            setBand(event.target.value, color, style);
+        });
+        updatePreOrderPrice();
+        setFinish('obsidian', '#111827', '#1E293B', 'Obsidian');
+        setBand('Titanium Link', '#8E8D8A', 'metal');
+
+        // Hotspot information data
+        const hotspots = {
+            sapphire: {
+                title: 'Sapphire Crystal Lens',
+                tag: 'Durability',
+                desc: 'Synthetically grown crystal glass with a Mohs hardness rating of 9. Zero optical reflection and impervious to scratches.'
+            },
+            sensor: {
+                title: 'Bio-Optic Sensor Array',
+                tag: 'Telemetry',
+                desc: '8-LED optical heart rate cluster with continuous ECG tracking, blood oxygen sensing, and metabolic metrics.'
+            },
+            crown: {
+                title: 'Precision Digital Crown',
+                tag: 'Controls',
+                desc: 'Haptic feedback digital crown engineered from solid titanium with micro-machined grip ridges.'
+            },
+            audio: {
+                title: 'Acoustic Speaker & Dual Mic',
+                tag: 'Communication',
+                desc: 'Wind-resistant dual microphone array with AI noise cancellation and deep bass crystal acoustic speaker.'
+            }
+        };
+
+        function showHotspotInfo(key) {
+            const data = hotspots[key];
+            if (!data) return;
+            document.getElementById('hotspotTitle').innerText = data.title;
+            document.getElementById('hotspotTag').innerText = data.tag;
+            document.getElementById('hotspotDesc').innerText = data.desc;
+        }
+
+        // Live Clock Script
+        setInterval(() => {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const clock = document.getElementById('clockDisplay');
+            if (clock) clock.innerText = `${hours}:${minutes}`;
+        }, 1000);
+
+        // Pre-order state transitions: configuring -> validating -> confirmation.
+        let preOrderState = 'configuring';
+
+        function setPreOrderState(state) {
+            preOrderState = state;
+            const form = document.getElementById('preOrderForm');
+            const invoice = document.getElementById('preOrderInvoice');
+            const modal = document.getElementById('preOrderModal');
+            form.classList.toggle('hidden', state === 'confirmation');
+            invoice.classList.toggle('hidden', state !== 'confirmation');
+            modal.dataset.state = state;
+        }
+
+        // Modal Controls
+        function openPreOrderModal() {
+            document.getElementById('preOrderModal').classList.remove('hidden');
+        }
+
+        function closePreOrderModal() {
+            document.getElementById('preOrderModal').classList.add('hidden');
+        }
+
+        function formatPaymentMethodLabel(method) {
+            const labels = {
+                credit_card: 'Credit / Debit Card',
+                apple_pay: 'Apple Pay / Google Pay',
+                bank_transfer: 'Direct Bank Wire Transfer'
+            };
+            return labels[method] || method;
+        }
+
+        async function handlePreOrderSubmit(e) {
+            e.preventDefault();
+            const form = document.getElementById('preOrderForm');
+            if (preOrderState !== 'configuring' || !form.reportValidity()) return;
+
+            setPreOrderState('validating');
+            const submitButton = document.getElementById('completePreOrderButton');
+            const status = document.getElementById('preOrderSubmissionStatus');
+            status.classList.add('hidden');
+            status.textContent = '';
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending Reservation...';
+
+            const customerName = document.getElementById('preOrderName').value.trim();
+            const customerEmail = document.getElementById('preOrderEmail').value.trim();
+            const paymentMethod = document.getElementById('paymentMethodOption').value;
+            const size = document.querySelector('input[name="size"]:checked').value;
+            const connectivity = document.getElementById('connectivityOption').value === 'satellite' ? '5G Satellite' : 'GPS';
+            const totalAmount = document.getElementById('modalTotalPrice').textContent;
+            const finish = currentFinish;
+            const band = currentBand;
+            const engravingText = document.getElementById('engravingInput').value.trim() || 'None';
+            const buildSpecs = `${size}mm • ${finish} • ${band} • Connectivity: ${connectivity}`;
+            const paymentPreference = formatPaymentMethodLabel(paymentMethod);
+            const instructions = 'Thank you for reserving your Aura Horizon Vision! Your order configuration is locked in. Our sales team will reach out directly to your provided email address with final checkout link, wire instructions, and priority shipping verification prior to dispatch.';
+            const payload = {
+                name: customerName,
+                email: customerEmail,
+                _subject: `Aura Horizon Vision Reservation: ${customerName} (${size}mm)`,
+                _template: 'table',
+                _captcha: 'false',
+                _replyto: customerEmail,
+                Customer_Name: customerName,
+                Customer_Email: customerEmail,
+                Watch_Size: `${size}mm`,
+                Case_Finish: finish,
+                Wristband: band,
+                Connectivity: connectivity,
+                Laser_Engraving: engravingText,
+                Payment_Preference: paymentPreference,
+                Total_Price: totalAmount,
+                Payment_Status: 'Pending Verification / Processing On Dispatch',
+                Message: `New pre-order submitted by ${customerName} (${customerEmail}).\n\nBuild: ${buildSpecs}\nLaser Engraving: ${engravingText}\nPayment Preference: ${paymentPreference}\nTotal: ${totalAmount}\nStatus: Pending Verification / Processing On Dispatch\n\n${instructions}`
+            };
+
+            try {
+                const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent('sobanamjad27@gmail.com')}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (!response.ok || (data.success !== true && data.success !== 'true')) {
+                    throw new Error(data.message || 'FormSubmit did not accept the reservation.');
+                }
+
+                document.getElementById('invoiceCustomerName').textContent = customerName;
+                document.getElementById('invoiceCustomerEmail').textContent = customerEmail;
+                document.getElementById('invoiceSize').textContent = `${size}mm`;
+                document.getElementById('invoiceFinish').textContent = finish;
+                document.getElementById('invoiceBand').textContent = band;
+                document.getElementById('invoiceConnectivity').textContent = connectivity;
+                document.getElementById('invoiceEngraving').textContent = engravingText;
+                document.getElementById('invoicePaymentMethod').textContent = paymentPreference;
+                document.getElementById('invoiceTotal').textContent = totalAmount;
+                document.getElementById('invoicePaymentStatus').textContent = 'Pending Verification / Processing On Dispatch';
+                document.getElementById('invoiceThankYouInstructions').textContent = instructions;
+                setPreOrderState('confirmation');
+                if (window.lucide) lucide.createIcons();
+            } catch (error) {
+                console.error('Error submitting pre-order via FormSubmit:', error);
+                status.textContent = 'Submission failed. Please check your internet connection or verify that the FormSubmit activation link was clicked for sobanamjad27@gmail.com.';
+                status.classList.remove('hidden');
+                setPreOrderState('configuring');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Complete Secure Pre-Order';
+            }
+        }
+
+        function editPreOrder() {
+            setPreOrderState('configuring');
+            const status = document.getElementById('preOrderSubmissionStatus');
+            status.classList.add('hidden');
+            status.textContent = '';
+            const submitButton = document.getElementById('completePreOrderButton');
+            submitButton.disabled = false;
+            submitButton.textContent = 'Complete Secure Pre-Order';
+        }
+
+        // Navigation helpers
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
